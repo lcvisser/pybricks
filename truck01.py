@@ -56,24 +56,41 @@ def toggle_mode(current_mode, modes):
     return modes[(idx + 1) % len(modes)]
 
 
-def calibrate(motor, color=Color.WHITE):
+def calibrate(func, color=Color.WHITE):
     hub.light.blink(color, [200, 300])
     remote.light.on(color)
-    # m.calibrate()
+    # func()
     wait(5000)
     hub.light.off()
     remote.light.off()
 
-halt()
+
 
 # Controllers
 class DriveControl:
-    def __init__(self):
+    def __init__(self, port_drive, port_steering):
         pass
-
+    
+    def calibrate_drive(self):
+        wait(5000)
+    
+    def calibrate_steering(self):
+        wait(5000)
+    
+    def process(self, buttons):
+        pass
+    
 
 class FunctionControl:
-    pass
+    def __init__(self, port_coupling, port_aux):
+        pass
+    
+    def calibrate_coupling(self):
+        wait(5000)
+
+    def calibrate_aux(self):
+        wait(5000)
+    
 
 # Connect remote
 try:
@@ -84,12 +101,17 @@ except OSError:
 
 remote.light.off()
 
+
+# Instantiate controllers
+drive_control = DriveControl(port_drive=PORT_DRIVE, port_steering=PORT_STEERING)
+function_control = FunctionControl(port_coupling=PORT_COUPLING, port_aux=PORT_AUX)
+
 # Calibration
 calibrations = [
-    ("drive", None, Color.BLUE),
-    ("steering", None, Color.YELLOW),
-    ("coupling", None, Color.WHITE),
-    ("auxiliary", None, Color.ORANGE)
+    ("drive", drive_control.calibrate_drive, Color.BLUE),
+    ("steering", drive_control.calibrate_steering, Color.YELLOW),
+    ("coupling", function_control.calibrate_coupling, Color.WHITE),
+    ("auxiliary", function_control.calibrate_aux, Color.ORANGE)
 ]
 while calibrations:
     while True:
@@ -98,9 +120,9 @@ while calibrations:
             break
         wait(LOOP_DELAY)
 
-    s, m, c = calibrations.pop()
+    s, f, c = calibrations.pop()
     print(f"calibrating: {s}")
-    calibrate(m, c)
+    calibrate(f, c)
 
 
 # Event loop
