@@ -86,14 +86,14 @@ class DriveControl:
         wait(500)
     
     def calibrate_steering(self):
-        print("steering: right")
-        angle_right = self._motor_steering.run_until_stalled(
+        print("steering: left")
+        angle_left = self._motor_steering.run_until_stalled(
             speed=self.STEER_CAL_SPEED, then=Stop.HOLD, duty_limit=25
         )
         wait(500)
         
-        print("steering: left")
-        angle_left = self._motor_steering.run_until_stalled(
+        print("steering: right")
+        angle_right = self._motor_steering.run_until_stalled(
             speed=-self.STEER_CAL_SPEED, then=Stop.HOLD, duty_limit=25
         )
         wait(500)
@@ -218,6 +218,7 @@ try:
     remote = Remote(name=REMOTE_ID)
     print(f"remote connected: {remote.name()}")
 except OSError:
+    print("failed to connect remote")
     halt()
 
 remote.light.off()
