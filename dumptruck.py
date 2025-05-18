@@ -6,7 +6,7 @@ from pybricks.tools import wait
 
 PORT_DRIVE = Port.D
 PORT_STEERING = Port.B
-PORT_AUX = Port.C
+PORT_AUX = Port.A
 REMOTE_ID = "ludo-remote01"
 
 MODE_INVALID = ""
@@ -69,7 +69,7 @@ class DriveControl:
 
     def __init__(self):
         self._motor_drive = Motor(PORT_DRIVE, Direction.CLOCKWISE, gears=[20, 28])
-        self._motor_steering = Motor(PORT_STEERING, Direction.CLOCKWISE, gears=[12, 28])
+        self._motor_steering = Motor(PORT_STEERING, Direction.CLOCKWISE, gears=[20, 28])
         self._drive_dc = 0
         self._steer_angle = 0
         self._steer_angle_max = 0
