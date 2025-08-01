@@ -14,7 +14,7 @@ PORT_TILT = Port.C
 LOW_BATTERY = 7.0  # V
 LOOP_DELAY = 100  # ms
 
-STEERING_SPEED = 150  
+STEERING_SPEED = 170  
 TILT_SPEED = 100  # % duty cyle
 
 # Global variables
@@ -22,7 +22,7 @@ hub = TechnicHub()
 remote = XboxController()
 
 motor_drive = Motor(PORT_DRIVE, Direction.COUNTERCLOCKWISE)
-motor_steering = Motor(PORT_STEERING)
+motor_steering = Motor(PORT_STEERING, Direction.COUNTERCLOCKWISE)
 motor_arm = Motor(PORT_ARM)
 motor_tilt = Motor(PORT_TILT)
 
@@ -37,13 +37,13 @@ def halt():
 def calibrate(motor, speed):
     hub.light.blink(Color.GREEN, [500, 500])
 
-    angle_right = motor.run_until_stalled(speed, duty_limit=25)
+    angle_left = motor.run_until_stalled(speed, duty_limit=25)
     wait(500)
     
-    angle_left = motor.run_until_stalled(-speed, duty_limit=25)
+    angle_right = motor.run_until_stalled(-speed, duty_limit=25)
     wait(500)
 
-    half_range = (angle_left - angle_right) / 2.0
+    half_range = (angle_right - angle_left) / 2.0
     motor.reset_angle(half_range)
     motor.run_target(speed, target_angle=0.0)
     wait(500)
@@ -60,8 +60,6 @@ except:
 
 # Main event loop
 try:
-    hub.system.set_stop_button(Button.GUIDE)
-
     while True:
         if hub.battery.voltage() > LOW_BATTERY:
             hub.light.on(Color.GREEN)
