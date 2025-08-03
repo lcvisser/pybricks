@@ -6,10 +6,10 @@ from pybricks.iodevices import XboxController
 
 
 # Constants
-PORT_DRIVE = Port.B
-PORT_STEERING = Port.D
-PORT_ARM = Port.A
-PORT_TILT = Port.C
+PORT_DRIVE = Port.C
+PORT_STEERING = Port.A
+PORT_ARM = Port.D
+PORT_TILT = Port.B
 
 LOW_BATTERY = 7.0  # V
 LOOP_DELAY = 100  # ms
