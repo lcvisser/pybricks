@@ -22,6 +22,8 @@ MODES_COLORS = {
     MODE_SHUTDOWN: Color.RED,
 }
 
+
+LOW_BATTERY = 7.0  # V
 LOOP_DELAY = 100  # ms
 SHUTDOWN_LIMIT = 20  # x LOOP_DELAY ms
 
@@ -218,9 +220,14 @@ try:
         if current_mode != new_mode:
             print(f"{current_mode} -> {new_mode}")
             current_mode = new_mode
-            c = MODES_COLORS[current_mode]
-            remote.light.on(c)
-            hub.light.on(c)
+
+        c = MODES_COLORS[current_mode]
+        remote.light.on(c)
+        if hub.battery.voltage() > LOW_BATTERY:
+            hub.light.on(c)            
+        else:
+            print(f"low battery: {hub.battery.voltage():.2f} V")
+            hub.light.blink(Color.YELLOW, [500, 500])
         
         buttons = remote.buttons.pressed()
         if Button.LEFT in buttons and Button.RIGHT in buttons:
@@ -232,6 +239,7 @@ try:
 
         if current_mode == MODE_SHUTDOWN:
             shutdown_count += 1
+            print(f"shutdown count: {shutdown_count}")
             if shutdown_count == SHUTDOWN_LIMIT:
                 hub.system.shutdown()
         else:
