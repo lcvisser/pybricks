@@ -23,7 +23,7 @@ remote = XboxController()
 
 motor_drive = Motor(PORT_DRIVE, Direction.COUNTERCLOCKWISE)
 motor_steering = Motor(PORT_STEERING, Direction.COUNTERCLOCKWISE)
-motor_arm = Motor(PORT_ARM)
+motor_arm = Motor(PORT_ARM, Direction.COUNTERCLOCKWISE)
 motor_tilt = Motor(PORT_TILT)
 
 
