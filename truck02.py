@@ -15,13 +15,13 @@ LOOP_DELAY = 50  # ms
 
 STEERING_SPEED = 170  
 COUPLING_SPEED = 100
-AUX_SPEED = 30
+AUX_SPEED = 25
 
 # Global variables
 hub = TechnicHub()
 remote = XboxController()
 
-motor_drive = Motor(PORT_DRIVE, Direction.COUNTERCLOCKWISE)
+motor_drive = Motor(PORT_DRIVE, Direction.CLOCKWISE)
 motor_steering = Motor(PORT_STEERING, Direction.CLOCKWISE)
 motor_coupling = Motor(PORT_COUPLING, Direction.COUNTERCLOCKWISE)
 motor_aux = Motor(PORT_AUX)
