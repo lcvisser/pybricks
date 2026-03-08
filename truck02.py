@@ -15,7 +15,7 @@ LOOP_DELAY = 50  # ms
 
 STEERING_SPEED = 170  
 COUPLING_SPEED = 100
-AUX_SPEED = 25
+AUX_DC = 45
 
 # Global variables
 hub = TechnicHub()
@@ -91,9 +91,9 @@ try:
         elif Button.B in buttons:
             motor_coupling.run_target(COUPLING_SPEED, closed_angle)
         elif Button.X in buttons:
-            motor_aux.dc(AUX_SPEED)
+            motor_aux.dc(AUX_DC)
         elif Button.Y in buttons:
-            motor_aux.dc(-AUX_SPEED)
+            motor_aux.dc(-AUX_DC)
         else:
             motor_aux.dc(0)
 
