@@ -13,7 +13,7 @@ PORT_AUX = Port.B
 LOW_BATTERY = 7.0  # V
 LOOP_DELAY = 50  # ms
 
-STEERING_SPEED = 170  
+STEERING_SPEED = 170
 COUPLING_SPEED = 100
 AUX_DC = 45
 
@@ -39,7 +39,7 @@ def calibrate_steering(motor, speed):
 
     angle_left = motor.run_until_stalled(speed, duty_limit=25)
     wait(500)
-    
+
     angle_right = motor.run_until_stalled(-speed, duty_limit=25)
     wait(500)
 
@@ -56,10 +56,10 @@ def calibrate_coupling(motor, speed):
 
     angle_open = motor.run_until_stalled(speed, duty_limit=20)
     wait(500)
-    
+
     angle_closed = motor.run_until_stalled(-speed, duty_limit=20)
     wait(500)
-    
+
     return angle_open, angle_closed
 
 
@@ -67,6 +67,7 @@ def calibrate_coupling(motor, speed):
 try:
     max_steer_angle = calibrate_steering(motor_steering, STEERING_SPEED)
     open_angle, closed_angle = calibrate_coupling(motor_coupling, COUPLING_SPEED)
+    motor_coupling.run_target(COUPLING_SPEED, open_angle)
 except:
     halt()
 
@@ -80,11 +81,11 @@ try:
             hub.light.blink(Color.YELLOW, [500, 500])
 
         steering, _ = remote.joystick_left()
-        motor_steering.run_target(STEERING_SPEED, max_steer_angle * steering / 100.0)
+        motor_steering.run_target(STEERING_SPEED, max_steer_angle * steering / 100.0, Stop.HOLD, wait=False)
 
         drive_fwd, drive_bck = remote.triggers()
         motor_drive.dc(drive_fwd - drive_bck)
-        
+
         buttons = remote.buttons.pressed()
         if Button.A in buttons:
             motor_coupling.run_target(COUPLING_SPEED, open_angle)
@@ -98,6 +99,9 @@ try:
             motor_aux.dc(0)
 
         if Button.GUIDE in buttons:
+            motor_coupling.run_target(COUPLING_SPEED, open_angle)
             hub.system.shutdown()
+
+        wait(LOOP_DELAY)
 except:
     halt()
