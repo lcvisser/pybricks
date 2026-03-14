@@ -12,19 +12,20 @@ PORT_ARM = Port.D
 PORT_TILT = Port.B
 
 LOW_BATTERY = 7.0  # V
-LOOP_DELAY = 100  # ms
+LOOP_DELAY = 50  # ms
 
-STEERING_SPEED = 170  
-TILT_SPEED = 100  # % duty cyle
+STEERING_SPEED = 170
+ARM_DC = 70
+TILT_DC = 100
 
 # Global variables
 hub = TechnicHub()
 remote = XboxController()
 
-motor_drive = Motor(PORT_DRIVE, Direction.COUNTERCLOCKWISE)
+motor_drive = Motor(PORT_DRIVE, Direction.CLOCKWISE)
 motor_steering = Motor(PORT_STEERING, Direction.COUNTERCLOCKWISE)
 motor_arm = Motor(PORT_ARM, Direction.COUNTERCLOCKWISE)
-motor_tilt = Motor(PORT_TILT)
+motor_tilt = Motor(PORT_TILT, Direction.COUNTERCLOCKWISE)
 
 
 # Utility functions
@@ -39,7 +40,7 @@ def calibrate(motor, speed):
 
     angle_left = motor.run_until_stalled(speed, duty_limit=25)
     wait(500)
-    
+
     angle_right = motor.run_until_stalled(-speed, duty_limit=25)
     wait(500)
 
@@ -66,18 +67,25 @@ try:
         else:
             hub.light.blink(Color.YELLOW, [500, 500])
 
-        steering, drive = remote.joystick_left()
-        motor_drive.dc(drive)
-        motor_steering.run_target(STEERING_SPEED, max_steer_angle * steering / 100.0)
+        steering, _ = remote.joystick_left()
+        motor_steering.run_target(STEERING_SPEED, max_steer_angle * steering / 100.0, Stop.HOLD, wait=False)
 
-        arm_down, arm_up = remote.triggers()
-        motor_arm.dc(arm_up - arm_down)
-        
+        drive_fwd, drive_bck = remote.triggers()
+        motor_drive.dc(drive_fwd - drive_bck)
+
         buttons = remote.buttons.pressed()
         if Button.A in buttons:
-            motor_tilt.dc(-TILT_SPEED)  # down
+            motor_arm.dc(-ARM_DC)  # down
         elif Button.B in buttons:
-            motor_tilt.dc(TILT_SPEED)  # up
+            motor_arm.dc(ARM_DC)  # up
+        else:
+            motor_arm.dc(0)
+
+        buttons = remote.buttons.pressed()
+        if Button.X in buttons:
+            motor_tilt.dc(-TILT_DC)  # down
+        elif Button.Y in buttons:
+            motor_tilt.dc(TILT_DC)  # up
         else:
             motor_tilt.dc(0)
 
